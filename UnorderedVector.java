@@ -12,7 +12,7 @@ structure for your class. You will implement the UnorderedListADT interface give
 
 */
 
-package data_structures;
+package data_structures; //name
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
