@@ -12,7 +12,7 @@ structure for your class. You will implement the UnorderedListADT interface give
 
 */
 
-package data_structures; //name
+package data_structures;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -30,13 +30,12 @@ public class UnorderedVector<E> implements UnorderedListADT<E> {
 
 //  Adds the Object obj to the list in first position.
     public void addFirst(E obj) {
-        
         storage[0] = obj;
     }
     
 //  Adds the Object obj to the end of the list.
     public void addLast(E obj) { 
-        storage[maxSize-1] = obj;
+        storage[currentSize+1] = obj;
     }
     
 //  Adds the Object obj to the list in the position indicated.  The list is one based, and
@@ -44,21 +43,47 @@ public class UnorderedVector<E> implements UnorderedListADT<E> {
 //  existing elements must be shifted over to make room for the insertion.     
     public void add(E obj, int position) { 
         position--;
-        
-        
+        if(isFull())
+            resize(storage);
+        if(!isValidPosition(position))
+            throw new RuntimeException("invalid location");
+        else {
+            shiftRight(position);
+            storage[position]=obj;
+        }   
     }        
+        private void shiftRight(int position){
+         position-- ;
+         for(int i=position; i<currentSize; i++){
+           storage[i]=storage[i+1];
+            }
+        }
+       
+    
+    private boolean isValidPosition(int pos){return storage[pos]!=null;}
+    
+    private void resize(E[] storage){
+        maxSize *= 2;
+        E[] newObject = (E[]) new Object[maxSize];
 
+        for(int i = 0; i < currentSize; i++) 
+            newObject[i] = storage[i];
+        storage = newObject;
+    }
+    
 //  Removes and returns the object located at the parameter position.
 //  Throws a RuntimeException if the position does not map to a valid position within the list.
     public E remove(int position) { 
-         
-    	Node <E> prev = null, current = head;
+        position--; 
+        
+    	storage[position]
     	for (int i=1; i < position; i++){
     		now = current;
     	    current = current.next;
     	}
         
-    		if (current == null) return null;
+        if (position == null) return null;
+        if
     		if (current == head) {					// if the obj is first
     			head = head.next;
     			currentSize --;
@@ -68,17 +93,47 @@ public class UnorderedVector<E> implements UnorderedListADT<E> {
    				currentSize --;
    				return null;
     			}
-    	
+        
+        
+       private void shiftLeft(int position){
+       position-- ;
+       for(int i=position; i>0; i--){
+           storage[i]=storage[i-1];
+            }
+       }
+        
+     public void remove(int ID){
+ for(int i=0; i<size ; i++)
+    if (ID[i].equals(ID)
+ {
+   remove(i);
+   return true;
+  }
 
-        return null; }
+        return null; 
+    }
     
 //  Removes and returns the parameter object obj from the list if the list contains it, 
 //  null otherwise.  If more than one element matches, the element is lowest position is removed
 //  and returned.
-    public E remove(E obj) { return null; } 
+    public E remove(E obj) { 
+        
+        return storage[i];
+    } 
     
 //  Removes and returns the first element in the list and null if the it is empty.
-    public E removeFirst() { return null; }
+    public E removeFirst() { 
+        if(storage[0]!= null)
+            return storage[0];
+            remove() storage[0];
+        else 
+            return null;
+            
+            else {
+    		head = head.next;
+    		currentSize--;
+    		return current.data;
+    }
     
 //  Removes and returns the last element in the list and null if the it is empty.
     public E removeLast() { return null; }      
