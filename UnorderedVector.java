@@ -23,24 +23,22 @@ public class UnorderedVector<E> implements UnorderedListADT<E> {
     private int currentSize, maxSize;
     
     private boolean isValidPosition(int pos){
-        return !(pos<0||pos>currentSize);
+        return !( pos<0 || (pos>=currentSize) );
     }
     
-    private void shiftLeft(int position){
-       position-- ;
-       for(int i=position; i<currentSize; i++){
+    private void shiftLeft(int index){
+       for(int i=index; i<currentSize; i++){
            storage[i]=storage[i+1];
             }
        }
     
-    private void shiftRight(int position){
-         position--;
-         for(int i=position; i<currentSize; i++){
-           storage[i+1]=storage[i];
-         }
+    private void shiftRight(int index){
+         for(int i=index; i>0; i--){ 
+           storage[i]=storage[i-1];
+         }  
     }
     
-    private void resize(E[] storage){
+    private void resize(){
         maxSize *= 2;
         E[] newObject = (E[]) new Object[maxSize];
 
@@ -57,18 +55,18 @@ public class UnorderedVector<E> implements UnorderedListADT<E> {
     
 //  Adds the Object obj to the list in first position.
     public void addFirst(E obj) {
-        if(storage[0]== null)
+            currentSize++; 
+            shiftRight(currentSize); 
             storage[0]=obj;
-        else {
-            shiftRight(currentSize-1); 
-            storage[0]=obj;
-        }
-        currentSize ++;
     }
     
 //  Adds the Object obj to the end of the list.
     public void addLast(E obj) { 
-        storage[currentSize+1] = obj;
+        
+        if(currentSize==maxSize){
+            resize();
+        }
+        storage[currentSize] = obj;
         currentSize++;
     }
     
@@ -77,9 +75,9 @@ public class UnorderedVector<E> implements UnorderedListADT<E> {
 //  existing elements must be shifted over to make room for the insertion.     
     public void add(E obj, int position) { 
         position--;
-        
+  
         if(isFull())
-            resize(storage);
+            resize();
         if(!isValidPosition(position))
             throw new RuntimeException("invalid location");
         else {
@@ -97,6 +95,7 @@ public class UnorderedVector<E> implements UnorderedListADT<E> {
     
 //  Removes and returns the object located at the parameter position.
 //  Throws a RuntimeException if the position does not map to a valid position within the list.
+    
     public E remove(int position) { 
         position--; 
         E tmp=null;
@@ -110,30 +109,44 @@ public class UnorderedVector<E> implements UnorderedListADT<E> {
         return tmp;
     }
        
-     
+    
 //  Removes and returns the parameter object obj from the list if the list contains it, 
 //  null otherwise.  If more than one element matches, the element is lowest position is removed
 //  and returned.
     public E remove(E obj) { 
         E tmp = null;
-        boolean ExcuteOnce=false;
-        if(contains(obj)){
+        //boolean ExcuteOnce=false;
+        
+        /*if(contains(obj)){
             if(!ExcuteOnce) {
                 obj=tmp;
                 shiftLeft(find(obj)); 
                 ExcuteOnce=true;
             } 
-        }
+        }*/
+        
+        int a = find(obj);
+        if (a == -1)
+            return null;
+        else 
+            tmp=remove(a);
+        
+        // you want to use find(obj) and set to a variable
+        // if it returns -1 it's not there
+        // otherwise, remove the object at the given index
+        // so store the object, shift left, decrement currSize
+        // return tmp
         currentSize--;
         return tmp;  
     } 
     
 //  Removes and returns the first element in the list and null if the it is empty.
     public E removeFirst() { 
-        if(isEmpty())
-            return null; 
-        else 
-            return remove(storage[0]); 
+//       E tmp=storage[0];
+//            remove(tmp);
+//            shiftLeft(1);
+//            return tmp; 
+           return remove(1);
     }
     
 //  Removes and returns the last element in the list and null if the it is empty.
@@ -182,11 +195,11 @@ public class UnorderedVector<E> implements UnorderedListADT<E> {
 //  Returns the position of the first element that matches the parameter obj
 //  and -1 if the item is not in the list.
     public int find(E obj) { 
-        for(int i=0; i < currentSize; i++)
+        for(int i=0; i < currentSize; i++){
             if(((Comparable<E>)obj).compareTo(storage[i]) == 0)
-            //if (storage[currentSize] == obj)
-                return currentSize;
-        return -1; 
+                return i+1; 
+        }
+        return -1;
     }  
 
 //  Returns true if the parameter object obj is in the list, false otherwise.
@@ -198,9 +211,8 @@ public class UnorderedVector<E> implements UnorderedListADT<E> {
 	}   
 
 //  The list is returned to an empty state.
-    public void clear() { 
-        for (int i=0;i<currentSize;i++)
-            storage[i] = null;   
+    public void clear() {
+            currentSize = 0;   
     }
 
 //  Returns true if the list is empty, otherwise false
@@ -244,6 +256,3 @@ public class UnorderedVector<E> implements UnorderedListADT<E> {
 	    }
 	}
 }
-
-
-
