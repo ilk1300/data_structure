@@ -51,18 +51,20 @@ public class UnorderedVector<E> implements UnorderedListADT<E> {
         if(!isValidPosition(position))
             throw new RuntimeException("invalid location");
         else {
-            currentSize++;
             if(storage[position]!=null){
                     shiftRight(position);
                     storage[position]=obj;
+                    currentSize++;
             }
-            else
+            else{
                 storage[position]=obj;
+                currentSize++;
+            }
         }   
     }        
         private void shiftRight(int position){
          position--;
-         for(int i=position; i<currentSize; i++){
+         for(int i= (position); i<(currentSize); i++){
            storage[i+1]=storage[i];
             }
         }
@@ -86,7 +88,6 @@ public class UnorderedVector<E> implements UnorderedListADT<E> {
     public E remove(int position) { 
         position--; 
         E tmp=null;
-       
         if(!isValidPosition(position))
             throw new RuntimeException("invalid location");
         else {
@@ -98,8 +99,7 @@ public class UnorderedVector<E> implements UnorderedListADT<E> {
     }
        private void shiftLeft(int position){
        position-- ;
-       
-       for(int i=position; i>position; i--){
+       for(int i=position; i<currentSize; i++){
            storage[i]=storage[i+1];
             }
        }
@@ -108,14 +108,16 @@ public class UnorderedVector<E> implements UnorderedListADT<E> {
 //  null otherwise.  If more than one element matches, the element is lowest position is removed
 //  and returned.
     public E remove(E obj) { 
-       E tmp = null;
+        E tmp = null;
+        boolean ExcuteOnce=false;
         if(contains(obj)){
-            tmp=obj;
-            if (current == null) return null
-            break;
+            if(! ExcuteOnce) {
+                obj=tmp;
+                shiftLeft(find(obj)); 
+                ExcuteOnce=true;
+            } 
         }
-        return tmp;
-        
+        return tmp;  
     } 
     
 //  Removes and returns the first element in the list and null if the it is empty.
@@ -133,7 +135,21 @@ public class UnorderedVector<E> implements UnorderedListADT<E> {
     }
     
 //  Removes and returns the last element in the list and null if the it is empty.
-    public E removeLast() { return null; }      
+    
+    public E removeLast() { 
+        E tmp=null;
+        
+        if(storage[1]==null){
+            tmp = storage[0];
+            storage[0]=null;
+        }
+        if(storage[currentSize-1]!=null){
+            tmp=storage[currentSize-1];
+            shiftLeft(currentSize);
+            currentSize--;
+        }
+        return tmp;
+    }      
 
 //  Returns the object located at the parameter position.
 //  Throws a RuntimeException if the position does not map to a valid position within 
@@ -214,9 +230,6 @@ public class UnorderedVector<E> implements UnorderedListADT<E> {
 	    throw new UnsupportedOperationException();
 	    }
 	}
-        
-       
-
 }
 
 
